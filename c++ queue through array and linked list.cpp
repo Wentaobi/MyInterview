@@ -1,5 +1,4 @@
 // C++ queue
-
 // Array
 template<typename Type>
 class Queue {
@@ -10,7 +9,6 @@ public:
     virtual void clear() = 0;               // clear queue
     virtual int size() = 0;                 // get queue size 
 };
-
 template<typename Type, int N>
 class staticQueue : public Queue<Type> {
 protected:
@@ -24,7 +22,7 @@ public:
     void push(Type& element) override {
         if (m_length < N) {
             m_space[m_length] = element;
-            m_write = (m_rite+1) % N;
+            m_write = (m_write+1) % N;
             m_length++;
         }
         else {"throw error";}
@@ -55,23 +53,21 @@ struct Node {
     int empty;
     struct Node* next;
 }
-
 struct ring_buffer
 {
     struct Node* buffer_start;
     struct Node* start;
     struct Node* end;
 };
-
 struct ring_buffer create_buffer(int size) {
     struct ring_buffer buf;
-    buf.start = (struct Node*) malloc(sizeof(Node));
+    buf.start = (struct Node*) malloc(sizeof(Node));// check
     buf.start->empty = 1;
     buf.start->next = nullptr;
-
     struct Node *ptr = buf.start;
     for (int i=0; i<size-1; i++) {
         struct Node *newNode = (struct Node*) malloc(sizeof(Node));
+        if (newNode == nullptr) return;
         newNode->empty = 1;
         newNode->next = nullptr;
         ptr->next = newNode;
@@ -81,7 +77,7 @@ struct ring_buffer create_buffer(int size) {
     buf.end = buf.start;
     buf.buffer_start = buf.start;
 }
-void display(struct ring_buffer b) {
+void display(struct ring_buffer& b) {
     struct Node* ptr = b.buffer_start;
     while (ptr->next != b.buffer_start) {
         if (ptr->empty != 1) {
@@ -89,14 +85,14 @@ void display(struct ring_buffer b) {
         }
     }
 }
-struct ring_buffer push(struct ring_buffer b, int data) {
+struct ring_buffer push(struct ring_buffer& b, int data) {
     b.end->data = data;
     b.end->empty = 0;
     b.end = b.end->next;
     return b;
 }
 
-struct ring_buffer pop(struct ring_buffer b) {
+struct ring_buffer pop(struct ring_buffer& b) {
     int tmp = b.start->data;
     b.start->empty = 1;
     b.start = b.start->next;
